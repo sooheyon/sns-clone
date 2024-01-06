@@ -20,8 +20,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          <Header />
-          {children}
+          <div className="max-w-screen-md mx-auto min-h-screen flex flex-col text-xs md:text-base">
+            <Header />
+            {children}
+          </div>
         </AuthProvider>
       </body>
     </html>
