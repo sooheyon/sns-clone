@@ -30,7 +30,6 @@ model Account {
   @@index([userId])
 }
 
-
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -40,4 +39,16 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
+  post          Post[]
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content   String   @db.Text
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
