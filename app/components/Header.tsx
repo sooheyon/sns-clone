@@ -1,6 +1,7 @@
-"use client"
+"use client";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { FC, useEffect } from "react";
+import Link from "next/link";
+import { FC } from "react";
 
 const Header: FC = () => {
   const { data: session } = useSession();
@@ -13,10 +14,6 @@ const Header: FC = () => {
     signOut();
   };
 
-  useEffect(() => {
-    console.log(session);
-  }, [session]);
-
   if (!session) {
     return (
       <div>
@@ -27,7 +24,8 @@ const Header: FC = () => {
 
   return (
     <div className="bg-red-100">
-      <button onClick={onClickSignOut}>Sign out</button>
+       <button onClick={onClickSignOut}>Sign out</button>
+      <Link href='/post/create'>Create</Link>
     </div>
   );
 };
