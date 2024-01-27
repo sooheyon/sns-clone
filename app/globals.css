@@ -10,6 +10,10 @@
   .input-style {
     @apply focus:border-black focus:outline-none border-2 px-2;
   }
+
+  .card-style {
+    @apply  border-black border-2 p-2
+  }
 }
 
 /* :root {

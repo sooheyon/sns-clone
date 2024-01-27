@@ -33,7 +33,7 @@ const Home: NextPage = () => {
 
   return (
     <div className="bg-red-100 grow">
-      <div>
+      <div className="p-4 flex flex-col gap-4">
         {posts.map((v, i) => (
           <PostCard key={i} post={v} />
         ))}
