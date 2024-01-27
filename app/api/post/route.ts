@@ -39,7 +39,54 @@ export const POST = async (request: NextRequest) => {
     });
 
     return NextResponse.json(post);
-    
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        message: error,
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+};
+
+// 모든 글 내용을 조회
+// 로그인 필요 없음
+export const GET = async (request: NextRequest) => {
+  try {
+    // localhost:3000/api/post/10
+    // localhost:3000/api/post?page=10 쿼리스트링
+    const { searchParams } = new URL(request.url);
+    const page = searchParams.get("page");
+
+    if (!page || isNaN(+page)) {
+      return NextResponse.json(
+        {
+          message: "Not exist page",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const COUNT = 3;
+
+    const posts = await prismaClient.post.findMany({
+      skip: (+page - 1) * COUNT,
+      take: COUNT,
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: { // select와 차이
+        user: true,
+      },
+    });
+
+    return NextResponse.json(posts);
   } catch (error) {
     console.error(error);
 
