@@ -3,19 +3,24 @@
 import { IPost } from "@/types";
 import axios from "axios";
 import { NextPage } from "next";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PostCard from "./components/PostCard";
 
 const Home: NextPage = () => {
   const [page, setPage] = useState<number>(1);
   const [posts, setPosts] = useState<IPost[]>([]);
 
+  const infiniteScrollRef = useRef<HTMLDivElement>(null)
+  const observer = useRef<IntersectionObserver>()
+
   const getPosts = async () => {
     try {
       const response = await axios.get<IPost[]>(
-        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/post?page=1`
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/post?page=${page}`
       );
 
+      if(response.data.length === 0) return;
+      
       setPage((prev) => prev + 1);
       setPosts((prev) => [...posts, ...response.data]);
     } catch (error) {
@@ -24,8 +29,18 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    getPosts();
-  }, []);
+    observer.current = new IntersectionObserver((entries)=>{
+      if(entries[0].isIntersecting){
+        getPosts()
+      }
+    })
+
+    if(!infiniteScrollRef.current) return
+
+    observer.current.observe(infiniteScrollRef.current)
+
+    return ()=> observer.current?.disconnect()
+  }, [page]);
 
   useEffect(() => {
     console.log(posts);
@@ -38,6 +53,7 @@ const Home: NextPage = () => {
           <PostCard key={i} post={v} />
         ))}
       </div>
+      <div className="w-full text-white" ref={infiniteScrollRef}>infinite scroll</div>
     </div>
   );
 };

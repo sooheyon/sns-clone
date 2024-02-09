@@ -73,7 +73,7 @@ export const GET = async (request: NextRequest) => {
       );
     }
 
-    const COUNT = 3;
+    const COUNT = 10;
 
     const posts = await prismaClient.post.findMany({
       skip: (+page - 1) * COUNT,
