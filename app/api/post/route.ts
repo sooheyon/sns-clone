@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 //http://localhost:3000/api/post
 export const POST = async (request: NextRequest) => {
   try {
-    const { content } = await request.json();
+    const { content, postId } = await request.json();
     const session = await getServerSession(authOptions);
 
     if (!content) {
@@ -31,10 +31,16 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    const post = await prismaClient.post.create({
-      data: {
+    const post = await prismaClient.post.upsert({
+      where: {
+        id: postId,
+      },
+      create: {
         content,
         userId: session.user.id,
+      },
+      update: {
+        content,
       },
     });
 
@@ -76,12 +82,18 @@ export const GET = async (request: NextRequest) => {
     const COUNT = 10;
 
     const posts = await prismaClient.post.findMany({
+      where: {
+        NOT: {
+          content: null,
+        },
+      },
       skip: (+page - 1) * COUNT,
       take: COUNT,
       orderBy: {
         createdAt: "desc",
       },
-      include: { // select와 차이
+      include: {
+        // select와 차이
         user: true,
       },
     });
