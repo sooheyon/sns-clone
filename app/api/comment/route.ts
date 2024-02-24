@@ -96,6 +96,9 @@ export const POST = async (request: NextRequest) => {
         userId: session.user.id,
         postId,
       },
+      include: {
+        user: true,
+      },
     });
 
     return NextResponse.json(comment);
