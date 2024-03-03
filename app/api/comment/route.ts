@@ -45,6 +45,11 @@ export const GET = async (request: NextRequest) => {
       },
       include: {
         user: true,
+        nestedComment: {
+          include:{
+            user: true
+          }
+        },
       },
     });
 
@@ -90,9 +95,8 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-
     const existPost = await prismaClient.post.findUnique({
-      where: { id:postId },
+      where: { id: postId },
     });
 
     if (!existPost) {
