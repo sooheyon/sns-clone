@@ -1,20 +1,19 @@
 "use client";
 
+import CommentCard from "@/app/components/CommentCard";
 import CreateCommentForm from "@/app/components/CreateCommentForm";
 import PostCard from "@/app/components/PostCard";
 import { IComment, IPost } from "@/types";
 import axios from "axios";
-import { formatDistanceToNow } from "date-fns";
-import { ko } from "date-fns/locale";
 import { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 const PostDetail: NextPage = () => {
   const { id } = useParams();
   const [post, setPost] = useState<IPost>();
-  const [content, setContent] = useState<string>(''); //comment content
+  const [content, setContent] = useState<string>(""); //comment content
   const [comments, setComments] = useState<IComment[]>([]);
 
   const { data: session } = useSession();
@@ -70,22 +69,7 @@ const PostDetail: NextPage = () => {
   }, []);
 
   const commentsMap = comments.map((comm, idx) => {
-    return (
-      <li key={comm.id} className="flex justify-between gap-2">
-        <div>
-          <span className="font-bold">{comm.user.name}</span>
-          <span className="ml-1">
-            #{comm.userId.substring(comm.userId.length - 4)}
-          </span>
-          <span className="ml-2">{comm.content}</span>
-        </div>
-        <div>
-          <span className="ml-2">
-            {formatDistanceToNow(new Date(comm.createdAt), { locale: ko })}
-          </span>
-        </div>
-      </li>
-    );
+    return <CommentCard key={comm.id} comment={comm} />;
   });
 
   return (
