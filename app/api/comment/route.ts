@@ -90,6 +90,22 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
+
+    const existPost = await prismaClient.post.findUnique({
+      where: { id:postId },
+    });
+
+    if (!existPost) {
+      return NextResponse.json(
+        {
+          message: "Not exist post",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
     const comment = await prismaClient.comment.create({
       data: {
         content,
