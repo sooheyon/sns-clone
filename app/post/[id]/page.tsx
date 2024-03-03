@@ -1,5 +1,6 @@
 "use client";
 
+import CreateCommentForm from "@/app/components/CreateCommentForm";
 import PostCard from "@/app/components/PostCard";
 import { IComment, IPost } from "@/types";
 import axios from "axios";
@@ -13,7 +14,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 const PostDetail: NextPage = () => {
   const { id } = useParams();
   const [post, setPost] = useState<IPost>();
-  const [content, setContent] = useState<string>(); //comment content
+  const [content, setContent] = useState<string>(''); //comment content
   const [comments, setComments] = useState<IComment[]>([]);
 
   const { data: session } = useSession();
@@ -63,10 +64,6 @@ const PostDetail: NextPage = () => {
     }
   };
 
-  const onChangeContent = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(e.target.value);
-  };
-
   useEffect(() => {
     getPost();
     getComments();
@@ -83,7 +80,6 @@ const PostDetail: NextPage = () => {
           <span className="ml-2">{comm.content}</span>
         </div>
         <div>
-         
           <span className="ml-2">
             {formatDistanceToNow(new Date(comm.createdAt), { locale: ko })}
           </span>
@@ -95,16 +91,11 @@ const PostDetail: NextPage = () => {
   return (
     <div>
       {post && <PostCard post={post} />}
-      <form onSubmit={onSubmitCreateComment} className="flex flex-col">
-        <textarea
-          className="input-style resize-none h-20 pt-2 mt-4 w-full"
-          value={content}
-          onChange={onChangeContent}
-          disabled={!session}
-          placeholder={session?'댓글을 작성하세요':'로그인 후 댓글을 작성하세요'}
-        />
-        <input className={`btn-style self-end mt-2 w-fit ${!session && 'text-gray-200 border-gray-200'}`} type="submit" value="댓글 생성" disabled={!session} />
-      </form>
+      <CreateCommentForm
+        onSubmitCreateComment={onSubmitCreateComment}
+        content={content}
+        setContent={setContent}
+      />
       <ul className="mt-8">{commentsMap}</ul>
     </div>
   );
